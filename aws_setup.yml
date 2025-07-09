@@ -22,7 +22,13 @@
       content: "{{ private_key }}"
       dest: /tmp/private-key.pem
       mode: '0600'
-      
+
+  - ansible.builtin.set_fact:
+      my_salt: "{{ 99999999 | random | to_uuid | regex_replace('-', '') | truncate(15, True, '') }}"
+
+  - ansible.builtin.set_fact:
+      hashed_password: "{{ ec2_juniper_pass | password_hash('sha512', my_salt) }}"
+
   - name: Set Juniper password
     ansible.builtin.expect:
       command: "ssh -o StrictHostKeyChecking=no -i /tmp/private-key.pem {{ ec2_juniper_user }}@{{ groups['juniper'][0] }}"
