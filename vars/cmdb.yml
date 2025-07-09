@@ -38,6 +38,25 @@ l3_interfaces_juniper:
       - address: 10.0.2.225/24
 
 srx_fw_rules:
+    name: Security_Policy_1
+    from_zones:
+      - zone_name: public
+    to_zones:
+      - zone_name: private
+    policies:
+      - name: policy1
+        description: "Allow traffic from trust to untrust"
+        match:
+          source_address:
+            - "192.168.1.0/24"
+          destination_address:
+            - "10.0.0.0/24"
+          application:
+            - "junos-ssh"
+        then:
+          permit: true
+
+srx_fw_rules2:
   - name: Rule_A
     src:
       zone: "public"
