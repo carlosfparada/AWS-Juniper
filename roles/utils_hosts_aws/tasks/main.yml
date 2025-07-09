@@ -3,42 +3,6 @@
 # - name: Refresh inventory
 #   ansible.builtin.meta: refresh_inventory
 
-- name: Get AAP node
-  set_fact:
-    node_name: "{{ item }}"
-  loop: "{{ groups['all'] }}"
-  when: hostvars[item].tags is defined and hostvars[item].tags.Name | regex_search("^aap-(.*)$")
-
-- name: Add AAP node to the aap group
-  add_host:
-    name: "{{ node_name }}"
-    groups: "aap"
-  when: node_name is defined
-
-- name: Get Cisco nodes
-  set_fact:
-    node_name: "{{ item }}"
-  loop: "{{ groups['all'] }}"
-  when: hostvars[item].tags is defined and hostvars[item].tags.Name | regex_search("^cisco-1$")
-
-- name: Add Cisco node to the cisco group
-  add_host:
-    name: "{{ node_name }}"
-    groups: "cisco"
-  when: node_name is defined
-
-- name: Get Arista node
-  set_fact:
-    node_name: "{{ item }}"
-  loop: "{{ groups['all'] }}"
-  when: hostvars[item].tags is defined and hostvars[item].tags.Name | regex_search("^arista-1$")
-
-- name: Add Arista node to the arista group
-  add_host:
-    name: "{{ node_name }}"
-    groups: "arista"
-  when: node_name is defined
-
 - name: Get Juniper node
   set_fact:
     node_name: "{{ item }}"
@@ -49,16 +13,4 @@
   add_host:
     name: "{{ node_name }}"
     groups: "juniper"
-  when: node_name is defined
-
-- name: Get Cisco XR node
-  set_fact:
-    node_name: "{{ item }}"
-  loop: "{{ groups['all'] }}"
-  when: hostvars[item].tags is defined and hostvars[item].tags.Name | regex_search("^ciscoxr-1$")
-
-- name: Add Cisco XR node to the ciscoxr group
-  add_host:
-    name: "{{ node_name }}"
-    groups: "ciscoxr"
   when: node_name is defined
