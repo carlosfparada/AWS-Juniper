@@ -14,7 +14,15 @@
   gather_facts: no
   vars_files: vars/main.yml
   tasks:
+  # cat private-key.pem | ansible-vault encrypt_string  --stdin-name 'private_key' --output private-key.vault
+  - ansible.builtin.include_vars: files/private-key.yml
 
+  - name: Copy private key locally
+    ansible.builtin.copy:
+      content: "{{ private_key }}"
+      dest: /tmp/private-key.pem
+      mode: '0600'
+      
   - name: Set Juniper password
     ansible.builtin.expect:
       command: "ssh -o StrictHostKeyChecking=no -i /tmp/private-key.pem {{ ec2_juniper_user }}@{{ groups['juniper'][0] }}"
