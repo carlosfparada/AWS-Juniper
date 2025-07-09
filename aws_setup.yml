@@ -8,71 +8,12 @@
   - include_role: 
       name: utils_hosts_aws
 
-- name: Set Cisco, Arista passwords and AAP/Netbox setup
+- name: Juniper setup
   hosts: localhost
   connection: local
   gather_facts: no
   vars_files: vars/main.yml
   tasks:
-
-  # cat private-key.pem | ansible-vault encrypt_string  --stdin-name 'private_key' --output private-key.vault
-  - ansible.builtin.include_vars: files/private-key.yml
-
-  - name: Copy private key locally
-    ansible.builtin.copy:
-      content: "{{ private_key }}"
-      dest: /tmp/private-key.pem
-      mode: '0600'
-
-  - name: Set Cisco password
-    ansible.builtin.expect:
-      command: "ssh -o StrictHostKeyChecking=no -o PubkeyAcceptedKeyTypes=+ssh-rsa -o HostKeyAlgorithms=+ssh-rsa -i /tmp/private-key.pem {{ ec2_cisco_user }}@{{ groups['cisco'][0] }}"
-      responses:
-        # ip-10-0-0-197# configure terminal
-        # ip-10-0-0-197(config)# aaa new-model
-        # ip-10-0-0-197(config)# aaa authentication login default local enable
-        # ip-10-0-0-197(config)# username ec2-user password xxxx
-        # ip-10-0-0-197(config)# exit
-        # ip-10-0-0-197# exit
-        'ip-*':
-          - configure terminal
-          - aaa new-model
-          - aaa authentication login default local enable
-          - username {{ ec2_cisco_user }} password {{ ec2_cisco_pass }}
-          - hostname Cisco-1
-        'Cisco-*':
-          - exit
-          - exit
-          - exit
-    no_log: false # hide passwords on logs
-
-  - name: Set Arista password
-    ansible.builtin.expect:
-      command: "ssh -o StrictHostKeyChecking=no -i /tmp/private-key.pem {{ ec2_arista_user }}@{{ groups['arista'][0] }}"
-      responses:
-        # localhost> enable
-        # localhost# configure terminal
-        # localhost(config)# aaa authentication login default local
-        # localhost(config)# username ec2-user secret 0 xxxx
-        # localhost(config)# exit
-        # localhost# exit
-        'localhost*':
-          - enable
-          - configure terminal
-          - aaa authentication login default local
-          - username {{ ec2_arista_user }} secret 0 {{ ec2_arista_pass }}
-          - hostname Arista-1
-        'Arista-*':
-          - exit
-          - exit
-          - exit
-    no_log: false # hide passwords on logs
-
-  - ansible.builtin.set_fact:
-      my_salt: "{{ 99999999 | random | to_uuid | regex_replace('-', '') | truncate(15, True, '') }}"
-
-  - ansible.builtin.set_fact:
-      hashed_password: "{{ ec2_juniper_pass | password_hash('sha512', my_salt) }}"
 
   - name: Set Juniper password
     ansible.builtin.expect:
@@ -103,19 +44,4 @@
           - "exit"
           - "exit"
           - "exit"
-    no_log: false # hide passwords on logs
-
-  - name: Set Cisco XR password
-    ansible.builtin.expect:
-      command: "ssh -o StrictHostKeyChecking=no -o PubkeyAcceptedKeyTypes=+ssh-rsa -o HostKeyAlgorithms=+ssh-rsa -i /tmp/private-key.pem {{ ec2_ciscoxr_user }}@{{ groups['ciscoxr'][0] }}"
-      responses:
-        'ios#':
-          - configure terminal
-          - exit
-        'ios\(config\)#':
-          # - hostname CiscoXR-1
-          - aaa authentication login default local
-          - username {{ ec2_ciscoxr_user }} password {{ ec2_ciscoxr_pass }}
-          - commit
-          - exit
     no_log: false # hide passwords on logs
