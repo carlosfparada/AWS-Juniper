@@ -36,3 +36,85 @@ l3_interfaces_juniper:
   - name: ge-0/0/1
     ipv4:
       - address: 10.0.2.225/24
+
+srx_fw_rules:
+  - name: Rule_A
+    src:
+      zone: "public"
+      addresses:
+        - name: "inside_host_D"
+          ipv4: "10.10.2.3"
+    dest:
+      zone: "private"
+      addresses:
+        - name: "pub_host_A"
+          type: host
+          ipv4: "7.7.7.1"
+        - name: "pub_host_B"
+          type: host
+          ipv4: "7.7.7.2"
+    services:
+      - http
+      - https
+    rule:
+      action: "Accept"
+  - name: Rule_B
+    src:
+      zone: "public"
+      addresses:
+        - name: "pub_host_E"
+          type: host
+          ipv4: "7.7.7.3"
+        - name: "pub_host_F"
+          type: host
+          ipv4: "7.7.7.4"
+    dest:
+      zone: "private"
+      addresses:
+        - name: "inside_host_C"
+          ipv4: "10.10.2.4"
+    services:
+      - http
+      - https
+    rule:
+      action: "Accept"
+
+
+  # - name: rule_C
+  #   src:
+  #     addresses:
+  #       - name: "pub_host_A"
+  #         type: host
+  #         ipv4: "7.7.7.1"
+  #       - name: "pub_host_B"
+  #         type: host
+  #         ipv4: "7.7.7.2"
+  #   dest:
+  #     addresses:
+  #       - name: "inside_host_D"
+  #         ipv4: "10.10.2.3"
+  #   services:
+  #     - http
+  #     - https
+  #   rule:
+  #     action: "Accept"
+  # - name: rule_D
+  #   inout: in
+  #   src:
+  #     interface: "inside"
+  #     addresses:
+  #       - name: "inside_host_C"
+  #         ipv4: "10.10.2.4"
+  #   dest:
+  #     addresses:
+  #       - name: "pub_host_E"
+  #         type: host
+  #         ipv4: "7.7.7.3"
+  #       - name: "pub_host_F"
+  #         type: host
+  #         ipv4: "7.7.7.4"
+  #   services:
+  #     - http
+  #     - https
+  #   rule:
+  #     action: "Accept"
