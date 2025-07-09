@@ -2,54 +2,31 @@
 # CMDB #
 ########
 
-# Arista (show vlan) & Juniper (show)
-vlans:
-  - name: Vlan_1
-    vlan_id: 1
-  - name: Vlan_10
-    vlan_id: 10
-  - name: Vlan_20
-    vlan_id: 20
-  - name: Vlan_101
-    vlan_id: 101
-  # - name: Vlan_102
-  #   vlan_id: 102
-  # - name: Vlan_103
-  #   vlan_id: 103
-  # - name: Vlan_104
-  #   vlan_id: 104
+# # Juniper (show)
+# vlans:
+#   - name: Vlan_1
+#     vlan_id: 1
+#   - name: Vlan_10
+#     vlan_id: 10
+#   - name: Vlan_20
+#     vlan_id: 20
+#   - name: Vlan_101
+#     vlan_id: 101
+#   - name: Vlan_102
+#     vlan_id: 102
+#   - name: Vlan_103
+#     vlan_id: 103
+#   - name: Vlan_104
+#     vlan_id: 104
 
-# Arista (show interfaces status)
-l2_interfaces_arista:
-  - name: Ethernet2
-    mode: access
-    access:
-      # vlan: 1
-      vlan: 1
-  - name: Ethernet3
-    mode: access
-    access:
-      vlan: 1
-      # vlan: 20
-
-# Juniper (show interfaces status)
-l2_interfaces_juniper:
-  - name: gr-0/0/0
-    access:
-      vlan: 1
-  - name: ip-0/0/0
-    access:
-      vlan: 1
-      # vlan: 20
-
-# Cisco (show ip interface brief)
-l3_interfaces_cisco:
-  - name: GigabitEthernet2
-    ipv4:
-    - address: 10.12.12.15/24
-  - name: VirtualPortGroup0
-    ipv4:
-      - address: 10.13.13.15/24
+# # Juniper (show interfaces status)
+# l2_interfaces_juniper:
+#   - name: gr-0/0/0
+#     access:
+#       vlan: 1
+#   - name: ip-0/0/0
+#     access:
+#       vlan: 1
 
 # Juniper (show ; show interface)
 l3_interfaces_juniper:
@@ -59,72 +36,3 @@ l3_interfaces_juniper:
   - name: ge-0/0/1
     ipv4:
       - address: 10.0.2.225/24
-
-# Cisco XR (show ip interface brief)
-l3_interfaces_ciscoxr:
-  - name: TenGigE0/0/0/1
-    ipv4:
-    - address: 10.0.1.143/24
-  - name: TenGigE0/0/0/2
-    ipv4:
-      - address: 10.0.2.124/24
-
-# Arista & Cisco (sh running-config | section bgp)
-bgp:
-  as_number: '45000'
-  neighbors:
-    - neighbor_address: 192.168.1.11
-      remote_as: '11000'
-    - neighbor_address: 192.168.1.12
-      remote_as: '12000'
-    # - neighbor_address: 192.168.1.13
-    #   remote_as: '13000'
-  timers:
-    keepalive: 1000
-    holdtime: 200
-
-# Juniper (show ; show bgp) - NOT WORKING!
-bgp_juniper:
-  # as_number: "45000"
-  groups:
-    - name: Group_AWS
-      local_as:
-        as_num: '45000'
-      neighbors: 
-        - neighbor_address: 192.168.1.11
-          peer_as: 11000
-          local_as:
-            as_num: '45000'
-        - neighbor_address: 192.168.1.12
-          peer_as: 11000
-          local_as:
-            as_num: '45000'
-      hold_time: 200
-
-# Arista & Cisco (show banner login) & Juniper (show system login message)
-banner:
-  login: "This is my Login Banner, set by Ansible GitOps v2"
-
-# Arista & Cisco (show ip name-server) & Juniper (show system name-server)
-dns_servers: 
-  - 8.8.8.8
-  - 8.8.8.9
-  - 8.8.8.10
-  # - 8.8.8.10
-
-evpn: 
-  bgp_asn: 65001
-  juniper:
-    address: 10.0.1.88
-    loopback: 2.2.2.2
-  ciscoxr:
-    address: 10.0.1.143
-    loopback: 1.1.1.1
-  vpns:
-    CUSTOMER_A:
-      name: CUSTOMER-A
-      vlan: 100
-      juniper_customer_int: ge-0/0/1
-      juniper_customer_ip: 192.168.100.2
-      ciscoxr_customer_int: TenGigE0/0/0/2
-      ciscoxr_customer_ip: 192.168.100.1

@@ -1,35 +1,26 @@
-# VPC GITOPS
-ec2_vpc_name: VPC_GITOPS
+# VPC JUNIPER
+ec2_vpc_name: VPC_JUNIPER
 ec2_vpc_region: us-east-1
 ec2_vpc_cidr: 10.0.0.0/16
 # Subnet
-ec2_subnet_name: Subnet_GITOPS
+ec2_subnet_name: Subnet_JUNIPER
 ec2_subnet_cidr: 10.0.0.0/24
 ec2_subnet_az: us-east-1a
 # Subnet1
-ec2_subnet_name1: Subnet_GITOPS_ENI1
+ec2_subnet_name1: Subnet_JUNIPER_ENI1
 ec2_subnet_cidr1: 10.0.1.0/24
 # Subnet2
-ec2_subnet_name2: Subnet_GITOPS_ENI2
+ec2_subnet_name2: Subnet_JUNIPER_ENI2
 ec2_subnet_cidr2: 10.0.2.0/24
-# Cisco ENIs
-ec2_cisco_eni_name1: ENI_CISCO_GITOPS1
-ec2_cisco_eni_name2: ENI_CISCO_GITOPS2
-# Arista ENIs
-ec2_arista_eni_name1: ENI_ARISTA_GITOPS1
-ec2_arista_eni_name2: ENI_ARISTA_GITOPS2
 # Juniper ENIs
-ec2_juniper_eni_name1: ENI_JUNIPER_GITOPS1
-ec2_juniper_eni_name2: ENI_JUNIPER_GITOPS2
-# Cisco XR ENIs
-ec2_ciscoxr_eni_name1: ENI_CISCOXR_GITOPS1
-ec2_ciscoxr_eni_name2: ENI_CISCOXR_GITOPS2
+ec2_juniper_eni_name1: ENI_JUNIPER_JUNIPER1
+ec2_juniper_eni_name2: ENI_JUNIPER_JUNIPER2
 # IGW
-ec2_igw_name: IGW_GITOPS
+ec2_igw_name: IGW_JUNIPER
 # Route Table
-ec2_rt_name: RT_GITOPS
+ec2_rt_name: RT_JUNIPER
 # RHEL Rules
-ec2_sg_name: SG_GITOPS
+ec2_sg_name: SG_JUNIPER
 ec2_sg_rules:
   - proto: tcp
     ports:
@@ -44,91 +35,6 @@ ec2_sg_rules:
     icmp_type:  -1 # icmp subtype, -1 = any subtype
     cidr_ip: 0.0.0.0/0
     rule_desc: Allow all ICMP
-eda_port: 6000
-
-# CISCO
-# https://www.cisco.com/c/en/us/td/docs/routers/C8000V/AWS/deploying-c8000v-on-amazon-web-services/deploy-c8000v-on-amazon-web-services.html
-# AMI
-ec2_cisco_image_name: "Cisco-C8K-PAYG-ESS-17.15.02a-0973be0f-17dc-43c1-9677-13348bbfe587"
-ec2_cisco_image_id: ami-070b9ff0a5ff52017
-# Volumes
-ec2_cisco_volumes:
-  - device_name: /dev/xvda
-    ebs:
-      volume_type: gp2
-      volume_size: 16
-      delete_on_termination: true
-      encrypted: false
-# Flavour 
-ec2_cisco_flavor_name: t3.medium
-# Key Pair
-ec2_cisco_key_name: "KeyPair-Virginia"
-# Instance
-ec2_cisco_instance_name: cisco-1
-
-# ec2-user
-ec2_cisco_user: "{{ ansible_user }}"
-ec2_cisco_pass: "{{ ansible_password }}"
-
-# Initial Provisioning
-# cisco_vlans:
-#   - name: Vlan10
-#     vlan_id: 10
-#     state: active
-#   - name: Vlan20
-#     vlan_id: 20
-#     state: active
-# cisco_l2_interfaces:
-#   - name: VirtualPortGroup0
-#     mode: access
-#     access:
-#       vlan: 10
-#   - name: GigabitEthernet2
-#     mode: access
-#     access:
-#       vlan: 20
-# cisco_l3_interfaces: 
-#   - name: VirtualPortGroup0
-#     ipv4:
-#     - address: 10.1.2.3/24
-#   - name: GigabitEthernet2
-#     ipv4:
-#     - address: 10.2.3.4/24
-
-
-# login_banner: |
-#   {
-#     "login_banner": "This is my Login Banner, set by Ansible GitOps v1"
-#   }
-
-# dns_servers: |
-#   {
-#     "dns_servers": [ "8.8.8.8", "8.8.8.9" ]
-#   }
-
-
-# ARISTA
-# AMI
-ec2_arista_image_name: "CloudEOS4.32.2F-971505ec-86ee-48a7-a33b-54295288e797"
-ec2_arista_image_id: ami-0f3d624fef6d9acf3
-# Volumes
-ec2_arista_volumes:
-  - device_name: /dev/xvda
-    ebs:
-      volume_type: gp2
-      volume_size: 8
-      delete_on_termination: true
-      encrypted: false
-# Flavour 
-ec2_arista_flavor_name: c5.xlarge
-# Key Pair
-ec2_arista_key_name: "KeyPair-Virginia"
-# Instance
-ec2_arista_instance_name: arista-1
-
-# ec2-user
-ec2_arista_user: "{{ ansible_user }}"
-ec2_arista_pass: "{{ ansible_password }}"
 
 
 # JUNIPER
@@ -153,29 +59,3 @@ ec2_juniper_instance_name: juniper-1
 # ec2-user / ?
 ec2_juniper_user: "{{ ansible_user }}"
 ec2_juniper_pass: "{{ ansible_password }}"
-
-
-# CISCO XR
-# AMI
-#ec2_ciscoxr_image_name: "xrv9k_ami_fullk9-x-7.3.3.cco64gbrenum1_20220216102241-2b277af1-02f1-4634-a5ef-b25652df57f2"
-ec2_ciscoxr_image_name: "xrv9k*"
-ec2_ciscoxr_image_id: ami-0ec33c2ee35a9554e
-# Volumes
-ec2_ciscoxr_volumes:
-  - device_name: /dev/xvda
-    ebs:
-      volume_type: gp2
-      volume_size: 64
-      delete_on_termination: true
-      encrypted: false
-# Flavour 
-ec2_ciscoxr_flavor_name: c4.2xlarge
-# ec2_ciscoxr_flavor_name: m5.24xlarge
-# Key Pair
-ec2_ciscoxr_key_name: "KeyPair-Virginia"
-# Instance
-ec2_ciscoxr_instance_name: ciscoxr-1
-
-# root / ?
-ec2_ciscoxr_user: "root"
-ec2_ciscoxr_pass: "{{ ansible_password }}"
