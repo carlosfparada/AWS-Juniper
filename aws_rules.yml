@@ -9,41 +9,6 @@
       name: utils_hosts_aws
 
 
-- name: Config Cisco IPs
-  hosts: cisco
-  gather_facts: false
-  vars_files: vars/cmdb.yml
-  vars:
-    ansible_connection: network_cli
-    ansible_network_os: ios
-    ansible_command_timeout: 300
-  tasks:
-    # sh ip address
-    - name: Cisco IOS Sets IP addresses
-      cisco.ios.ios_l3_interfaces:
-        config: "{{ l3_interfaces_cisco }}"
-        state: merged
-      register: _l3_interface_cisco
-      become: true
-
-    - name: Cisco IOS Debug IPs before
-      debug:
-        var: _l3_interface_cisco.before
-
-    - name: Cisco IOS Debug IPs command
-      debug:
-        var: _l3_interface_cisco.commands
-
-    - name: Cisco IOS Debug IPs after
-      debug:
-        var: _l3_interface_cisco.after
-
-    - name: Save running to startup when modified
-      cisco.ios.ios_config:
-        save_when: modified
-      become: true
-
-
 - name: Config Juniper IPs
   hosts: juniper
   gather_facts: false
@@ -95,49 +60,3 @@
         confirm_commit: true
       become: true
 
-
-- name: Config Cisco XR IPs
-  hosts: ciscoxr
-  gather_facts: false
-  vars_files: vars/cmdb.yml
-  vars:
-    ansible_user: root
-    ansible_connection: network_cli
-    ansible_network_os: iosxr
-    ansible_command_timeout: 300
-  tasks:
-    # sh ip address
-    - name: Cisco XR Sets IP addresses
-      cisco.iosxr.iosxr_l3_interfaces:
-        config: "{{ l3_interfaces_ciscoxr }}"
-        state: merged
-      register: _l3_interface_ciscoxr
-      become: true
-
-    # sh running-config name-server
-    - name: Cisco XR Enable interfaces
-      cisco.iosxr.iosxr_config:
-        lines:
-          - "no shutdown"
-        parents: "interface {{ item.name }}"
-      loop: "{{ l3_interfaces_ciscoxr }}"
-      become: true
-      register: _dns_servers
-
-    - name: Cisco XR Debug IPs before
-      debug:
-        var: _l3_interface_ciscoxr.before
-
-    - name: Cisco XR Debug IPs command
-      debug:
-        var: _l3_interface_ciscoxr.commands
-
-    - name: Cisco XR Debug IPs after
-      debug:
-        var: _l3_interface_ciscoxr.after
-
-    - name: Save running to startup when modified
-      cisco.iosxr.iosxr_config:
-        lines:
-          - "commit"
-      become: true
