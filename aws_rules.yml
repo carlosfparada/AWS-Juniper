@@ -1,0 +1,143 @@
+---
+
+- name: Get nodes from Inventory and add to Groups
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+  - include_role: 
+      name: utils_hosts_aws
+
+
+- name: Config Cisco IPs
+  hosts: cisco
+  gather_facts: false
+  vars_files: vars/cmdb.yml
+  vars:
+    ansible_connection: network_cli
+    ansible_network_os: ios
+    ansible_command_timeout: 300
+  tasks:
+    # sh ip address
+    - name: Cisco IOS Sets IP addresses
+      cisco.ios.ios_l3_interfaces:
+        config: "{{ l3_interfaces_cisco }}"
+        state: merged
+      register: _l3_interface_cisco
+      become: true
+
+    - name: Cisco IOS Debug IPs before
+      debug:
+        var: _l3_interface_cisco.before
+
+    - name: Cisco IOS Debug IPs command
+      debug:
+        var: _l3_interface_cisco.commands
+
+    - name: Cisco IOS Debug IPs after
+      debug:
+        var: _l3_interface_cisco.after
+
+    - name: Save running to startup when modified
+      cisco.ios.ios_config:
+        save_when: modified
+      become: true
+
+
+- name: Config Juniper IPs
+  hosts: juniper
+  gather_facts: false
+  vars_files: vars/cmdb.yml
+  vars:
+    ansible_connection: netconf
+    ansible_network_os: junos
+    ansible_command_timeout: 300
+  tasks:
+    # sh ip address
+    - name: Juniper OS Sets IP addresses
+      junipernetworks.junos.junos_l3_interfaces:
+        config: "{{ l3_interfaces_juniper }}"
+        state: merged
+      register: _l3_interface_juniper
+      become: true
+
+    - name: Juniper OS Debug IPs before
+      debug:
+        var: _l3_interface_juniper.before
+
+    - name: Juniper OS Debug IPs command
+      debug:
+        var: _l3_interface_juniper.commands
+
+    - name: Juniper OS Debug IPs after
+      debug:
+        var: _l3_interface_juniper.after
+
+    - name: Juniper enable inncoming traffic
+      junipernetworks.junos.junos_config:
+        lines:
+          - "set security zones security-zone zone interfaces ge-0/0/0"
+          - "set security zones security-zone zone interfaces ge-0/0/1"
+          - "set security zones security-zone zone host-inbound-traffic system-services ping"
+      become: true
+
+    - name: Check Juniper OS correctness of commit configuration
+      junipernetworks.junos.junos_config:
+        check_commit: true
+      become: true
+
+    # - name: Rollback Juniper OS to last commit
+    #   junipernetworks.junos.junos_config:
+    #     rollback: 0
+
+    - name: Confirm previous Juniper OS commit
+      junipernetworks.junos.junos_config:
+        confirm_commit: true
+      become: true
+
+
+- name: Config Cisco XR IPs
+  hosts: ciscoxr
+  gather_facts: false
+  vars_files: vars/cmdb.yml
+  vars:
+    ansible_user: root
+    ansible_connection: network_cli
+    ansible_network_os: iosxr
+    ansible_command_timeout: 300
+  tasks:
+    # sh ip address
+    - name: Cisco XR Sets IP addresses
+      cisco.iosxr.iosxr_l3_interfaces:
+        config: "{{ l3_interfaces_ciscoxr }}"
+        state: merged
+      register: _l3_interface_ciscoxr
+      become: true
+
+    # sh running-config name-server
+    - name: Cisco XR Enable interfaces
+      cisco.iosxr.iosxr_config:
+        lines:
+          - "no shutdown"
+        parents: "interface {{ item.name }}"
+      loop: "{{ l3_interfaces_ciscoxr }}"
+      become: true
+      register: _dns_servers
+
+    - name: Cisco XR Debug IPs before
+      debug:
+        var: _l3_interface_ciscoxr.before
+
+    - name: Cisco XR Debug IPs command
+      debug:
+        var: _l3_interface_ciscoxr.commands
+
+    - name: Cisco XR Debug IPs after
+      debug:
+        var: _l3_interface_ciscoxr.after
+
+    - name: Save running to startup when modified
+      cisco.iosxr.iosxr_config:
+        lines:
+          - "commit"
+      become: true

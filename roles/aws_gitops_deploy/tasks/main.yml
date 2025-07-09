@@ -1,0 +1,336 @@
+---
+
+- name: Create VPC {{ ec2_vpc_name }}
+  amazon.aws.ec2_vpc_net:
+    name: "{{ ec2_vpc_name }}"
+    cidr_block: "{{ ec2_vpc_cidr }}"
+    region: "{{ ec2_vpc_region }}"
+    state: present
+    tags:
+      name: "{{ ec2_vpc_name }}"
+  register: vpc
+
+- name: Create Subnet in VPC
+  amazon.aws.ec2_vpc_subnet:
+    vpc_id: "{{ vpc.vpc.id }}"
+    cidr: "{{ ec2_subnet_cidr }}"
+    region: "{{ ec2_vpc_region }}"
+    az: "{{ ec2_subnet_az }}"
+    state: present
+    tags:
+      name: "{{ ec2_subnet_name }}"
+  register: subnet
+
+- name: Create Subnet 1 in VPC
+  amazon.aws.ec2_vpc_subnet:
+    vpc_id: "{{ vpc.vpc.id }}"
+    cidr: "{{ ec2_subnet_cidr1 }}"
+    region: "{{ ec2_vpc_region }}"
+    az: "{{ ec2_subnet_az }}"
+    state: present
+    tags:
+      Name: "{{ ec2_subnet_name1 }}"
+  register: subnet1
+
+- name: Create Subnet 2 in VPC
+  amazon.aws.ec2_vpc_subnet:
+    vpc_id: "{{ vpc.vpc.id }}"
+    cidr: "{{ ec2_subnet_cidr2 }}"
+    region: "{{ ec2_vpc_region }}"
+    az: "{{ ec2_subnet_az }}"
+    state: present
+    tags:
+      Name: "{{ ec2_subnet_name2 }}"
+  register: subnet2
+
+- name: Create Internet Gateway (IGW)
+  amazon.aws.ec2_vpc_igw:
+    vpc_id: "{{ vpc.vpc.id }}"
+    region: "{{ ec2_vpc_region }}"
+    state: present
+    tags:
+      name: "{{ ec2_igw_name }}"
+  register: igw
+
+- name: Create Route Table and IGW route
+  amazon.aws.ec2_vpc_route_table:
+    vpc_id: "{{ vpc.vpc.id }}"
+    region: "{{ ec2_vpc_region }}"
+    state: present
+    tags:
+      name: "{{ ec2_rt_name }}"
+    subnets:
+      - "{{ subnet.subnet.id }}"
+    routes:
+      - dest: 0.0.0.0/0
+        gateway_id: "{{ igw.gateway_id }}"
+
+- name: Create Security Group
+  amazon.aws.ec2_security_group:
+    description: Allow all on ports
+    name: "{{ ec2_sg_name }}"
+    rules: "{{ ec2_sg_rules }}"
+    region: "{{ ec2_vpc_region }}"
+    vpc_id: "{{ vpc.vpc.id }}"
+    state: present
+    tags:
+      name: "{{ ec2_sg_name }}"
+
+# CISCO
+- name: Get Cisco AMI by Name
+  amazon.aws.ec2_ami_info:
+    filters:
+      name: "{{ ec2_cisco_image_name }}"
+    region: "{{ ec2_vpc_region }}"
+  register: ami_cisco_find
+
+- name: Create Cisco instance
+  amazon.aws.ec2_instance:
+    image_id: "{{ ami_cisco_find.images[-1].image_id | default('') }}"
+    instance_type: "{{ ec2_cisco_flavor_name }}"
+    security_group: "{{ ec2_sg_name }}"
+    name: "{{ ec2_cisco_instance_name }}"
+    key_name: "{{ ec2_cisco_key_name }}"
+    region: "{{ ec2_vpc_region }}"
+    vpc_subnet_id: "{{ subnet.subnet.id }}"
+    # network:
+    #   assign_public_ip: true
+    network_interfaces:
+      - assign_public_ip: true
+    volumes: "{{ ec2_cisco_volumes }}"
+    tags:
+      name: "{{ ec2_cisco_instance_name }}"
+    state: running
+  register: ec2_cisco_instance
+
+- name: Create and Attach Cisco ENI 1
+  amazon.aws.ec2_eni:
+    name: "{{ ec2_cisco_eni_name1 }}"
+    region: "{{ ec2_vpc_region }}"
+    instance_id: "{{ ec2_cisco_instance.instances[0].instance_id }}"
+    device_index: 1
+    subnet_id: "{{ subnet1.subnet.id }}"
+    #security_groups: "{{ ec2_sg_name }}"
+    delete_on_termination: true
+    attached: true
+    state: present
+
+- name: Create and Attach Cisco ENI 2
+  amazon.aws.ec2_eni:
+    name: "{{ ec2_cisco_eni_name2 }}"
+    region: "{{ ec2_vpc_region }}"
+    instance_id: "{{ ec2_cisco_instance.instances[0].instance_id }}"
+    device_index: 2
+    subnet_id: "{{ subnet2.subnet.id }}"
+    #security_groups: "{{ ec2_sg_name }}"
+    delete_on_termination: true
+    attached: true
+    state: present
+
+- name: Print Cisco instance details
+  ansible.builtin.debug:
+    msg: "Cisco: ssh [-i <*.pem>] ec2-user@{{ ec2_cisco_instance.instances[0].public_dns_name }}"
+
+# ARISTA
+- name: Get Arista AMI by Name
+  amazon.aws.ec2_ami_info:
+    filters:
+      name: "{{ ec2_arista_image_name }}"
+    region: "{{ ec2_vpc_region }}"
+  register: ami_find
+
+- name: Create Arista instance
+  amazon.aws.ec2_instance:
+    image_id: "{{ ami_find.images[-1].image_id | default('') }}"
+    instance_type: "{{ ec2_arista_flavor_name }}"
+    security_group: "{{ ec2_sg_name }}"
+    name: "{{ ec2_arista_instance_name }}"
+    key_name: "{{ ec2_arista_key_name }}"
+    region: "{{ ec2_vpc_region }}"
+    vpc_subnet_id: "{{ subnet.subnet.id }}"
+    # network:
+    #   assign_public_ip: true
+    network_interfaces:
+      - assign_public_ip: true
+    volumes: "{{ ec2_arista_volumes }}"
+    tags:
+      name: "{{ ec2_arista_instance_name }}"
+    state: running
+  register: ec2_arista_instance
+
+- name: Create and Attach Arista ENI 1
+  amazon.aws.ec2_eni:
+    name: "{{ ec2_arista_eni_name1 }}"
+    region: "{{ ec2_vpc_region }}"
+    instance_id: "{{ ec2_arista_instance.instances[0].instance_id }}"
+    device_index: 1
+    subnet_id: "{{ subnet1.subnet.id }}"
+    #security_groups: "{{ ec2_sg_name }}"
+    delete_on_termination: true
+    attached: true
+    state: present
+
+- name: Create and Attach Arista ENI 2
+  amazon.aws.ec2_eni:
+    name: "{{ ec2_arista_eni_name2 }}"
+    region: "{{ ec2_vpc_region }}"
+    instance_id: "{{ ec2_arista_instance.instances[0].instance_id }}"
+    device_index: 2
+    subnet_id: "{{ subnet2.subnet.id }}"
+    #security_groups: "{{ ec2_sg_name }}"
+    delete_on_termination: true
+    attached: true
+    state: present
+
+- name: Print Arista instance details
+  ansible.builtin.debug:
+    msg: "Arista: ssh [-i <*.pem>] ec2-user@{{ ec2_arista_instance.instances[0].public_dns_name }}"
+
+# JUNIPER
+- name: Get Juniper AMI by Name
+  amazon.aws.ec2_ami_info:
+    filters:
+      name: "{{ ec2_juniper_image_name }}"
+    region: "{{ ec2_vpc_region }}"
+  register: ami_find
+
+- name: Create Juniper instance
+  amazon.aws.ec2_instance:
+    image_id: "{{ ami_find.images[-1].image_id | default('') }}"
+    instance_type: "{{ ec2_juniper_flavor_name }}"
+    security_group: "{{ ec2_sg_name }}"
+    name: "{{ ec2_juniper_instance_name }}"
+    key_name: "{{ ec2_juniper_key_name }}"
+    region: "{{ ec2_vpc_region }}"
+    vpc_subnet_id: "{{ subnet.subnet.id }}"
+    # network:
+    #   assign_public_ip: true
+    network_interfaces:
+      - assign_public_ip: true
+    volumes: "{{ ec2_juniper_volumes }}"
+    #user_data: "{{ lookup('ansible.builtin.template', 'user_data_juniper.j2') }}"
+    tags:
+      name: "{{ ec2_juniper_instance_name }}"
+    state: running
+  register: ec2_juniper_instance
+
+- name: Create and Attach Juniper ENI 1
+  amazon.aws.ec2_eni:
+    name: "{{ ec2_juniper_eni_name1 }}"
+    region: "{{ ec2_vpc_region }}"
+    instance_id: "{{ ec2_juniper_instance.instances[0].instance_id }}"
+    device_index: 1
+    subnet_id: "{{ subnet1.subnet.id }}"
+    #security_groups: "{{ ec2_sg_name }}"
+    delete_on_termination: true
+    attached: true
+    state: present
+
+- name: Create and Attach Juniper ENI 2
+  amazon.aws.ec2_eni:
+    name: "{{ ec2_juniper_eni_name2 }}"
+    region: "{{ ec2_vpc_region }}"
+    instance_id: "{{ ec2_juniper_instance.instances[0].instance_id }}"
+    device_index: 2
+    subnet_id: "{{ subnet2.subnet.id }}"
+    #security_groups: "{{ ec2_sg_name }}"
+    delete_on_termination: true
+    attached: true
+    state: present
+
+- name: Print Juniper instance details
+  ansible.builtin.debug:
+    msg: "Juniper: ssh [-i <*.pem>] ec2-user@{{ ec2_juniper_instance.instances[0].public_dns_name }}"
+
+# CISCO XR
+- name: Get Cisco XR AMI by Name
+  amazon.aws.ec2_ami_info:
+    filters:
+      name: "{{ ec2_ciscoxr_image_name }}"
+    region: "{{ ec2_vpc_region }}"
+  register: ami_ciscoxr_find
+
+- name: Create Cisco XR instance
+  amazon.aws.ec2_instance:
+    #image_id: "{{ ami_ciscoxr_find.images[-1].image_id | default('') }}"
+    image_id: "{{ ec2_ciscoxr_image_id }}"
+    instance_type: "{{ ec2_ciscoxr_flavor_name }}"
+    security_group: "{{ ec2_sg_name }}"
+    name: "{{ ec2_ciscoxr_instance_name }}"
+    key_name: "{{ ec2_ciscoxr_key_name }}"
+    region: "{{ ec2_vpc_region }}"
+    vpc_subnet_id: "{{ subnet.subnet.id }}"
+    # network:
+    #   assign_public_ip: true
+    network_interfaces:
+      - assign_public_ip: true
+    volumes: "{{ ec2_ciscoxr_volumes }}"
+    tags:
+      name: "{{ ec2_ciscoxr_instance_name }}"
+    state: running
+  register: ec2_ciscoxr_instance
+
+- name: Create and Attach Cisco XR ENI 1
+  amazon.aws.ec2_eni:
+    name: "{{ ec2_ciscoxr_eni_name1 }}"
+    region: "{{ ec2_vpc_region }}"
+    instance_id: "{{ ec2_ciscoxr_instance.instances[0].instance_id }}"
+    device_index: 1
+    subnet_id: "{{ subnet1.subnet.id }}"
+    #security_groups: "{{ ec2_sg_name }}"
+    delete_on_termination: true
+    attached: true
+    state: present
+
+- name: Create and Attach Cisco XR ENI 2
+  amazon.aws.ec2_eni:
+    name: "{{ ec2_ciscoxr_eni_name2 }}"
+    region: "{{ ec2_vpc_region }}"
+    instance_id: "{{ ec2_ciscoxr_instance.instances[0].instance_id }}"
+    device_index: 2
+    subnet_id: "{{ subnet2.subnet.id }}"
+    #security_groups: "{{ ec2_sg_name }}"
+    delete_on_termination: true
+    attached: true
+    state: present
+
+- name: Print Cisco XR instance details
+  ansible.builtin.debug:
+    msg: "Cisco: ssh [-i <*.pem>] ec2-user@{{ ec2_ciscoxr_instance.instances[0].public_dns_name }}"
+
+- name: Wait until Cisco to boot up
+  wait_for:
+    port: 22
+    state: started
+    timeout: 600
+    delay: 30
+    host: "{{ ec2_cisco_instance.instances[0].public_dns_name }}"
+
+- name: Wait until Arista to boot up
+  wait_for:
+    port: 22
+    state: started
+    timeout: 600
+    delay: 30
+    host: "{{ ec2_arista_instance.instances[0].public_dns_name }}"
+
+- name: Wait until Juniper to boot up
+  wait_for:
+    port: 22
+    state: started
+    timeout: 600
+    delay: 30
+    host: "{{ ec2_juniper_instance.instances[0].public_ip_address }}"
+
+- name: Wait until Cisco XR to boot up
+  wait_for:
+    port: 22
+    state: started
+    timeout: 7200
+    delay: 30
+    host: "{{ ec2_ciscoxr_instance.instances[0].public_dns_name }}"
+
+- name: Sleep for 30 seconds and continue with play
+  wait_for:
+    timeout: 30
+  delegate_to: localhost

@@ -1,0 +1,99 @@
+---
+
+- name: Get nodes from Inventory and add to Groups
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+  - include_role: 
+      name: utils_hosts_aws
+
+
+- name: Collect Cisco Facts
+  hosts: cisco
+  gather_facts: false
+  vars:
+    ansible_connection: network_cli
+    ansible_network_os: ios
+    ansible_command_timeout: 300
+  tasks:
+    - name: Cisco Facts
+      #connection: local
+      cisco.ios.ios_facts:
+        gather_subset:
+          # - hardware
+          - all
+        gather_network_resources:
+          # - "interfaces"
+          # - "l2_interfaces"
+          # - "l3_interfaces"
+          # - "acl_interfaces"
+          # - "static_routes" 
+          # - "acls" 
+          # - "vlans"
+          - all
+      become: true
+      register: _ios_facts
+    - name: Debug IOS facts
+      debug:
+        var: _ios_facts
+
+- name: Collect Arista Facts
+  hosts: arista
+  gather_facts: false
+  vars:
+    ansible_connection: network_cli
+    ansible_network_os: eos
+    ansible_command_timeout: 300
+  tasks:
+    - name: EOS Facts
+      arista.eos.eos_facts:
+        gather_subset: all
+        gather_network_resources: all
+      become: true
+      register: _eos_facts
+    - name: Debug EOS facts
+      debug:
+        var: _eos_facts
+
+
+- name: Collect Juniper Facts
+  hosts: juniper
+  gather_facts: false
+  vars:
+    ansible_connection: netconf
+    ansible_network_os: junos
+    ansible_command_timeout: 300
+  tasks:
+    - name: JunOS Facts
+      junipernetworks.junos.junos_facts:
+        gather_subset:
+          - "!config"
+        gather_network_resources:
+      register: _junos_facts
+
+    - debug: 
+        var: _junos_facts
+
+
+- name: Collect Cisco XR Facts
+  hosts: ciscoxr
+  gather_facts: false
+  vars:
+    ansible_user: root
+    ansible_connection: network_cli
+    ansible_network_os: iosxr
+    ansible_command_timeout: 300
+  tasks:
+    - name: Cisco XR Facts
+      #connection: local
+      cisco.iosxr.iosxr_facts:
+        gather_subset:
+          - all
+        gather_network_resources:
+          - all
+      become: true
+      register: _iosxr_facts
+    - name: Debug IOS XR facts
+      debug:
+        var: _iosxr_facts

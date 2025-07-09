@@ -1,0 +1,219 @@
+---
+
+- name: Query VPCs
+  amazon.aws.ec2_vpc_net_info:
+    region: "{{ ec2_vpc_region }}"
+    filters:
+      "tag:name": "{{ ec2_vpc_name }}"
+  register: vpc
+
+- name: Query Subnets
+  amazon.aws.ec2_vpc_subnet_info:
+    region: "{{ ec2_vpc_region }}"
+    filters:
+      "tag:name": "{{ ec2_subnet_name }}"
+  register: subnet
+
+- name: Query Subnet 1
+  amazon.aws.ec2_vpc_subnet_info:
+    region: "{{ ec2_vpc_region }}"
+    filters:
+      "tag:Name": "{{ ec2_subnet_name1 }}"
+  register: subnet1
+
+- name: Query Subnet 2
+  amazon.aws.ec2_vpc_subnet_info:
+    region: "{{ ec2_vpc_region }}"
+    filters:
+      "tag:Name": "{{ ec2_subnet_name2 }}"
+  register: subnet2
+
+- name: Query Cisco ENI 1
+  amazon.aws.ec2_eni_info:
+    region: "{{ ec2_vpc_region }}"
+    filters:
+      "tag:Name": "{{ ec2_cisco_eni_name1 }}"
+  register: cisco_eni1
+
+- name: Query Cisco ENI 2
+  amazon.aws.ec2_eni_info:
+    region: "{{ ec2_vpc_region }}"
+    filters:
+      "tag:Name": "{{ ec2_cisco_eni_name2 }}"
+  register: cisco_eni2
+
+- name: Query Arista ENI 1
+  amazon.aws.ec2_eni_info:
+    region: "{{ ec2_vpc_region }}"
+    filters:
+      "tag:Name": "{{ ec2_arista_eni_name1 }}"
+  register: arista_eni1
+
+- name: Query Arista ENI 2
+  amazon.aws.ec2_eni_info:
+    region: "{{ ec2_vpc_region }}"
+    filters:
+      "tag:Name": "{{ ec2_arista_eni_name2 }}"
+  register: arista_eni2
+
+- name: Query Route Tables
+  amazon.aws.ec2_vpc_route_table_info:
+    region: "{{ ec2_vpc_region }}"
+    filters:
+      "tag:name": "{{ ec2_rt_name }}"
+  register: rtb
+
+- name: Terminate Cisco instance
+  amazon.aws.ec2_instance:
+    state: absent
+    region: "{{ ec2_vpc_region }}"
+    filters:
+      "tag:name": "{{ ec2_cisco_instance_name }}"
+
+- name: Delete Cisco ENI 1
+  amazon.aws.ec2_eni:
+    name: "{{ ec2_cisco_eni_name1 }}"
+    subnet_id: "{{ subnet1.subnets[0].subnet_id }}"
+    region: "{{ ec2_vpc_region }}"
+    device_index: 1
+    state: absent
+  when: subnet1.subnets | length > 0
+
+- name: Delete Cisco ENI 2
+  amazon.aws.ec2_eni:
+    name: "{{ ec2_cisco_eni_name2 }}"
+    subnet_id: "{{ subnet2.subnets[0].subnet_id }}"
+    region: "{{ ec2_vpc_region }}"
+    device_index: 2
+    state: absent
+  when: subnet2.subnets | length > 0
+
+- name: Terminate Arista instance
+  amazon.aws.ec2_instance:
+    state: absent
+    region: "{{ ec2_vpc_region }}"
+    filters:
+      "tag:name": "{{ ec2_arista_instance_name }}"
+
+- name: Delete Arista ENI 1
+  amazon.aws.ec2_eni:
+    name: "{{ ec2_arista_eni_name1 }}"
+    subnet_id: "{{ subnet1.subnets[0].subnet_id }}"
+    region: "{{ ec2_vpc_region }}"
+    device_index: 1
+    state: absent
+  when: subnet1.subnets | length > 0
+
+- name: Delete Arista ENI 2
+  amazon.aws.ec2_eni:
+    name: "{{ ec2_arista_eni_name2 }}"
+    subnet_id: "{{ subnet2.subnets[0].subnet_id }}"
+    region: "{{ ec2_vpc_region }}"
+    device_index: 2
+    state: absent
+  when: subnet2.subnets | length > 0
+
+- name: Terminate Juniper instance
+  amazon.aws.ec2_instance:
+    state: absent
+    region: "{{ ec2_vpc_region }}"
+    filters:
+      "tag:Name": "{{ ec2_juniper_instance_name }}"
+
+- name: Delete Juniper ENI 1
+  amazon.aws.ec2_eni:
+    name: "{{ ec2_juniper_eni_name1 }}"
+    subnet_id: "{{ subnet1.subnets[0].subnet_id }}"
+    region: "{{ ec2_vpc_region }}"
+    device_index: 1
+    state: absent
+  when: subnet1.subnets | length > 0
+
+- name: Delete Juniper ENI 2
+  amazon.aws.ec2_eni:
+    name: "{{ ec2_juniper_eni_name2 }}"
+    subnet_id: "{{ subnet2.subnets[0].subnet_id }}"
+    region: "{{ ec2_vpc_region }}"
+    device_index: 2
+    state: absent
+  when: subnet2.subnets | length > 0
+
+- name: Terminate Cisco XR instance
+  amazon.aws.ec2_instance:
+    state: absent
+    region: "{{ ec2_vpc_region }}"
+    filters:
+      "tag:name": "{{ ec2_ciscoxr_instance_name }}"
+
+- name: Delete Cisco XR ENI 1
+  amazon.aws.ec2_eni:
+    name: "{{ ec2_ciscoxr_eni_name1 }}"
+    subnet_id: "{{ subnet1.subnets[0].subnet_id }}"
+    region: "{{ ec2_vpc_region }}"
+    device_index: 1
+    state: absent
+  when: subnet1.subnets | length > 0
+
+- name: Delete Cisco XR ENI 2
+  amazon.aws.ec2_eni:
+    name: "{{ ec2_ciscoxr_eni_name2 }}"
+    subnet_id: "{{ subnet2.subnets[0].subnet_id }}"
+    region: "{{ ec2_vpc_region }}"
+    device_index: 2
+    state: absent
+  when: subnet2.subnets | length > 0
+
+- name: Delete Security Group
+  amazon.aws.ec2_security_group:
+    name: "{{ ec2_sg_name }}"
+    region: "{{ ec2_vpc_region }}"
+    state: absent
+
+- name: Delete Subnet in VPC
+  amazon.aws.ec2_vpc_subnet:
+    vpc_id: "{{ vpc.vpcs[0].id }}"
+    cidr: "{{ subnet.subnets[0].cidr_block }}"
+    region: "{{ ec2_vpc_region }}"
+    state: absent
+  when: vpc.vpcs | length > 0 and subnet.subnets | length > 0
+
+- name: Delete Subnet 1 in VPC
+  amazon.aws.ec2_vpc_subnet:
+    vpc_id: "{{ vpc.vpcs[0].id }}"
+    cidr: "{{ subnet1.subnets[0].cidr_block }}"
+    region: "{{ ec2_vpc_region }}"
+    state: absent
+  when: vpc.vpcs | length > 0 and subnet1.subnets | length > 0
+
+- name: Delete Subnet 2 in VPC
+  amazon.aws.ec2_vpc_subnet:
+    vpc_id: "{{ vpc.vpcs[0].id }}"
+    cidr: "{{ subnet2.subnets[0].cidr_block }}"
+    region: "{{ ec2_vpc_region }}"
+    state: absent
+  when: vpc.vpcs | length > 0 and subnet2.subnets | length > 0
+
+- name: Delete Route Table
+  amazon.aws.ec2_vpc_route_table:
+    vpc_id: "{{ vpc.vpcs[0].id }}"
+    region: "{{ ec2_vpc_region }}"
+    route_table_id: "{{ rtb.route_tables[0].id }}"
+    lookup: id
+    state: absent
+  when: vpc.vpcs | length > 0 and rtb.route_tables | length > 0
+
+- name: Delete Internet Gateway (IGW)
+  amazon.aws.ec2_vpc_igw:
+    vpc_id: "{{ vpc.vpcs[0].id }}"
+    region: "{{ ec2_vpc_region }}"
+    state: absent
+  when: vpc.vpcs | length > 0
+
+- name: Delete VPC
+  amazon.aws.ec2_vpc_net:
+    name: "{{ ec2_vpc_name }}"
+    region: "{{ ec2_vpc_region }}"
+    cidr_block: "{{ vpc.vpcs[0].cidr_block }}"
+    state: absent
+  when: vpc.vpcs | length > 0
+
