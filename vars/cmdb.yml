@@ -37,6 +37,20 @@ l3_interfaces_juniper:
     ipv4:
       - address: 10.0.2.225/24
 
+    # - name: Create security zone "trust"
+    #   junipernetworks.junos.junos_security_zone:
+    #     name: trust
+    #     interfaces:
+    #       - name: ge-0/0/1.0
+    #     state: merged
+
+    # - name: Create security zone "untrust"
+    #   junipernetworks.junos.junos_security_zone:
+    #     name: untrust
+    #     interfaces:
+    #       - name: ge-0/0/2.0
+    #     state: merged
+
 srx_fw_rules:
     name: Security_Policy_1
     from_zones:
