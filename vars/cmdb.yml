@@ -71,7 +71,20 @@ security_policies:
           then:
             # deny: true
             permit:
-              application_services: {}
+              application_services:
+                application_traffic_control_rule_set: test_traffic_control
+                gprs_gtp_profile: gtp1
+                icap_redirect: test_icap
+                reverse_redirect_wx: 'True'
+                uac_policy:
+                  enable: true
+              firewall_authentication:
+                push_to_identity_management: true
+                web_authentication:
+                  - FWClient1
+              tcp_options:
+                initial_tcp_mss: 64
+                window_scale: true              
         - name: rule_B
           description: "Allow rule_B traffic from public to private"
           match:
@@ -89,7 +102,21 @@ security_policies:
           then:
             # deny: true
             permit:
-              application_services: {}
+              application_services:
+                application_traffic_control_rule_set: test_traffic_control
+                gprs_gtp_profile: gtp1
+                icap_redirect: test_icap
+                reverse_redirect_wx: 'True'
+                uac_policy:
+                  enable: true
+              firewall_authentication:
+                push_to_identity_management: true
+                web_authentication:
+                  - FWClient1
+              tcp_options:
+                initial_tcp_mss: 64
+                window_scale: true
+                
   # - name: rule_C
   #   src:
   #     addresses:
