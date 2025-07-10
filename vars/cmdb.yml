@@ -80,8 +80,6 @@ security_policies:
                   enable: true
               firewall_authentication:
                 push_to_identity_management: true
-                web_authentication:
-                  - FWClient1
               tcp_options:
                 initial_tcp_mss: 64
                 window_scale: true              
@@ -111,12 +109,10 @@ security_policies:
                   enable: true
               firewall_authentication:
                 push_to_identity_management: true
-                web_authentication:
-                  - FWClient1
               tcp_options:
                 initial_tcp_mss: 64
                 window_scale: true
-                
+
   # - name: rule_C
   #   src:
   #     addresses:
