@@ -33,8 +33,7 @@
 
     - name: Create security policies
       junipernetworks.junos.junos_security_policies:
-        config:
-          # "{{ security_policies }}"
+        config: # "{{ security_policies }}"
           global:
             policies:
               - description: test update
