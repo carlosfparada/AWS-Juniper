@@ -48,44 +48,44 @@ security_zones:
 
 # UI (Firefox)
 security_policies:
-    global:
-      policies:
-        - name: rule_A
-          description: "Allow rule_A traffic from public to private"
-          match:
-            source_address:
-              addresses:
-                - 10.10.2.3
-            destination_address:
-              addresses:
-                - 7.7.7.1
-                - 7.7.7.2
-            application:
-              names:
-                - junos-http
-                - junos-https
-          then:
-            permit:
-              tcp_options:
-                window_scale: true
-        - name: rule_B
-          description: "Allow rule_B traffic from public to private"
-          match:
-            source_address:
-              addresses:
-                - 7.7.7.1
-                - 7.7.7.2
-            destination_address:
-              addresses:
-                - 10.10.2.3
-            application:
-              names:
-                - junos-http
-                - junos-https
-          then:
-            permit:
-              tcp_options:
-                window_scale: true
+  global:
+    policies:
+      - name: rule_A
+        description: "Allow rule_A traffic from public to private"
+        match:
+          source_address:
+            addresses:
+              - 10.10.2.3
+          destination_address:
+            addresses:
+              - 7.7.7.1
+              - 7.7.7.2
+          application:
+            names:
+              - junos-http
+              - junos-https
+        then:
+          permit:
+            tcp_options:
+              window_scale: true
+      - name: rule_B
+        description: "Allow rule_B traffic from public to private"
+        match:
+          source_address:
+            addresses:
+              - 7.7.7.1
+              - 7.7.7.2
+          destination_address:
+            addresses:
+              - 10.10.2.3
+          application:
+            names:
+              - junos-http
+              - junos-https
+        then:
+          permit:
+            tcp_options:
+              window_scale: true
       # from_zones:
       #   - name: public
       #     to_zones:
