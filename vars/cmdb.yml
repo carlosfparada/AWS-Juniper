@@ -48,10 +48,10 @@ security_zones:
 
 # UI (Firefox)
 security_policies:
-    # from_zones:
-    #   - name: public
-    #     to_zones:
-    #       - name: privatea
+    from_zones:
+      - name: public
+        to_zones:
+          - name: privatea
     global:
       policies:
         - name: rule_A
@@ -69,7 +69,6 @@ security_policies:
                 - junos-http
                 - junos-https
           then:
-            # deny: true
             permit:
               tcp_options:
                 window_scale: true              
@@ -88,7 +87,6 @@ security_policies:
                 - junos-http
                 - junos-https
           then:
-            # deny: true
             permit:
               tcp_options:
                 window_scale: true
