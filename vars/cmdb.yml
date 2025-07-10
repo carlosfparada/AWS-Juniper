@@ -47,66 +47,42 @@ security_zones:
       - ge-0/0/1
 
 # UI (Firefox)
-security_policy_rules:
-    name: Security_Policy_1
+security_policies:
     from_zones:
-      - zone_name: public
-    to_zones:
-      - zone_name: private
-    policies:
-      - name: policy1
-        description: "Allow traffic from trust to untrust"
-        match:
-          source_address:
-            - "192.168.1.0/24"
-          destination_address:
-            - "10.0.0.0/24"
-          application:
-            - "junos-ssh"
-        then:
-          permit: true
+      - name: public
+        to_zones:
+          - name: private
+    global:
+      policies:
+        - name: rule_A
+          description: "Allow rule_A traffic from public to private"
+          match:
+            source_address:
+              - 10.10.2.3
+            destination_address:
+              - 7.7.7.1
+              - 7.7.7.2
+            application:
+              names:
+                - http
+                - https
+          then:
+            permit: true
+        - name: rule_B
+          description: "Allow rule_B traffic from public to private"
+          match:
+            source_address:
+              - 7.7.7.1
+              - 7.7.7.2
+            destination_address:
+              - 10.10.2.3
+            application:
+              names:
+                - http
+                - https
+          then:
+            permit: true
 
-srx_fw_rules2:
-  - name: Rule_A
-    src:
-      zone: "public"
-      addresses:
-        - name: "inside_host_D"
-          ipv4: "10.10.2.3"
-    dest:
-      zone: "private"
-      addresses:
-        - name: "pub_host_A"
-          type: host
-          ipv4: "7.7.7.1"
-        - name: "pub_host_B"
-          type: host
-          ipv4: "7.7.7.2"
-    services:
-      - http
-      - https
-    rule:
-      action: "Accept"
-  - name: Rule_B
-    src:
-      zone: "public"
-      addresses:
-        - name: "pub_host_E"
-          type: host
-          ipv4: "7.7.7.3"
-        - name: "pub_host_F"
-          type: host
-          ipv4: "7.7.7.4"
-    dest:
-      zone: "private"
-      addresses:
-        - name: "inside_host_C"
-          ipv4: "10.10.2.4"
-    services:
-      - http
-      - https
-    rule:
-      action: "Accept"
 
 
   # - name: rule_C
