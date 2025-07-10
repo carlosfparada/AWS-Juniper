@@ -51,7 +51,7 @@ security_policies:
     from_zones:
       - name: public
         to_zones:
-          - name: privatea
+          - name: private
     global:
       policies:
         - name: rule_A
