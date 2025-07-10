@@ -19,14 +19,14 @@
     ansible_command_timeout: 300
   tasks:
     - name: Create security zone "public"
-      junipernetworks.junos.junos_security_zone:
+      junipernetworks.junos.junos_security_zones:
         name: public
         interfaces:
           - name: ge-0/0/0
         state: merged
 
     - name: Create security zone "private"
-      junipernetworks.junos.junos_security_zone:
+      junipernetworks.junos.junos_security_zones:
         name: private
         interfaces:
           - name: ge-0/0/1
