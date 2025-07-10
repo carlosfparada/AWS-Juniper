@@ -18,12 +18,12 @@
     ansible_network_os: junos
     ansible_command_timeout: 300
   tasks:
-    # - name: Delete default security zones
-    #   junipernetworks.junos.junos_security_zones:
-    #     config:
-    #       zones:
-    #         - name: zone
-    #     state: deleted
+    - name: Delete default security zones
+      junipernetworks.junos.junos_security_zones:
+        config:
+          zones:
+            - name: zone
+        state: deleted
 
     - name: Create security zones
       junipernetworks.junos.junos_security_zones:
