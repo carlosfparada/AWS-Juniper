@@ -75,8 +75,6 @@ security_policies:
                 reverse_redirect_wx: 'True'
                 uac_policy:
                   enable: true
-              firewall_authentication:
-                push_to_identity_management: true
               tcp_options:
                 initial_tcp_mss: 64
                 window_scale: true              
@@ -101,8 +99,6 @@ security_policies:
                 reverse_redirect_wx: 'True'
                 uac_policy:
                   enable: true
-              firewall_authentication:
-                push_to_identity_management: true
               tcp_options:
                 initial_tcp_mss: 64
                 window_scale: true
