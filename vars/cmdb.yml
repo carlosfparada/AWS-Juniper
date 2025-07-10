@@ -71,10 +71,12 @@ security_policies:
           description: "Allow rule_A traffic from public to private"
           match:
             source_address:
-              - 10.10.2.3
+              addresses:
+                - 10.10.2.3
             destination_address:
-              - 7.7.7.1
-              - 7.7.7.2
+              addresses:
+                - 7.7.7.1
+                - 7.7.7.2
             application:
               any: true
               # names:
@@ -88,10 +90,12 @@ security_policies:
           description: "Allow rule_B traffic from public to private"
           match:
             source_address:
-              - 7.7.7.1
-              - 7.7.7.2
+              addresses:
+                - 7.7.7.1
+                - 7.7.7.2
             destination_address:
-              - 10.10.2.3
+              addresses:
+                - 10.10.2.3
             application:
               any: true
               # names:
