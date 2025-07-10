@@ -48,10 +48,10 @@ security_zones:
 
 # UI (Firefox)
 security_policies:
-    from_zones:
-      - name: public
-        to_zones:
-          - name: privatea
+    # from_zones:
+    #   - name: public
+    #     to_zones:
+    #       - name: privatea
     global:
       policies:
         - name: rule_A
@@ -69,8 +69,9 @@ security_policies:
                 - http
                 - https
           then:
-            permit: 
-              application_services:
+            deny: true
+            # permit: 
+            #   application_services:
         - name: rule_B
           description: "Allow rule_B traffic from public to private"
           match:
@@ -87,8 +88,9 @@ security_policies:
                 - http
                 - https
           then:
-            permit: 
-              application_services:
+            deny: true
+            # permit: 
+            #   application_services:
 
 
   # - name: rule_C
