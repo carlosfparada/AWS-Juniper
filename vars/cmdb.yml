@@ -71,8 +71,6 @@ security_policies:
           then:
             # deny: true
             permit:
-              application_services:
-                reverse_redirect_wx: 'True'
               tcp_options:
                 initial_tcp_mss: 64
                 window_scale: true              
@@ -93,8 +91,6 @@ security_policies:
           then:
             # deny: true
             permit:
-              application_services:
-                reverse_redirect_wx: 'True'
               tcp_options:
                 initial_tcp_mss: 64
                 window_scale: true
