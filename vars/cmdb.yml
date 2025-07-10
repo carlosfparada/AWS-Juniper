@@ -71,7 +71,7 @@ security_policies:
           then:
             # deny: true
             permit: 
-              application_services:
+              application_services: []
         - name: rule_B
           description: "Allow rule_B traffic from public to private"
           match:
@@ -89,7 +89,7 @@ security_policies:
           then:
             # deny: true
             permit: 
-              application_services:
+              application_services: []
 
 
   # - name: rule_C
