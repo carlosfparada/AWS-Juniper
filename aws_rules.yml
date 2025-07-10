@@ -18,14 +18,7 @@
     ansible_network_os: junos
     ansible_command_timeout: 300
   tasks:
-    - name: Create security zone "public"
-      junipernetworks.junos.junos_security_zones:
-        name: public
-        interfaces:
-          - name: ge-0/0/0
-        state: merged
-
-    - name: Create security zone "private"
+    - name: Create security zones
       junipernetworks.junos.junos_security_zones:
         config:
           zones:
@@ -37,13 +30,13 @@
                 - ge-0/0/1
         state: merged
 
-    - name: Juniper enable inncoming traffic
-      junipernetworks.junos.junos_config:
-        lines:
-          - "set security zones security-zone zone interfaces ge-0/0/0"
-          - "set security zones security-zone zone interfaces ge-0/0/1"
-          - "set security zones security-zone zone host-inbound-traffic system-services ping"
-      become: true
+    # - name: Juniper enable inncoming traffic
+    #   junipernetworks.junos.junos_config:
+    #     lines:
+    #       - "set security zones security-zone zone interfaces ge-0/0/0"
+    #       - "set security zones security-zone zone interfaces ge-0/0/1"
+    #       - "set security zones security-zone zone host-inbound-traffic system-services ping"
+    #   become: true
 
     - name: Check Juniper OS correctness of commit configuration
       junipernetworks.junos.junos_config:
