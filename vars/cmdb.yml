@@ -67,7 +67,7 @@ security_policies:
                 - http
                 - https
           then:
-            permit: true
+            deny: true
         - name: rule_B
           description: "Allow rule_B traffic from public to private"
           match:
@@ -81,7 +81,7 @@ security_policies:
                 - http
                 - https
           then:
-            permit: true
+            deny: true
 
 
 
