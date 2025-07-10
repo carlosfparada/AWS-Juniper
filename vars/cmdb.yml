@@ -89,7 +89,6 @@ security_policies:
                 permit:
                   tcp_options:
                     window_scale: true
-
     global:
       policies:
         - name: rule_A
