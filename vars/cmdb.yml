@@ -126,41 +126,4 @@ security_policies:
             permit:
               tcp_options:
                 window_scale: true   
-  # - name: rule_C
-  #   src:
-  #     addresses:
-  #       - name: "pub_host_A"
-  #         type: host
-  #         ipv4: "7.7.7.1"
-  #       - name: "pub_host_B"
-  #         type: host
-  #         ipv4: "7.7.7.2"
-  #   dest:
-  #     addresses:
-  #       - name: "inside_host_D"
-  #         ipv4: "10.10.2.3"
-  #   services:
-  #     - http
-  #     - https
-  #   rule:
-  #     action: "Accept"
-  # - name: rule_D
-  #   inout: in
-  #   src:
-  #     interface: "inside"
-  #     addresses:
-  #       - name: "inside_host_C"
-  #         ipv4: "10.10.2.4"
-  #   dest:
-  #     addresses:
-  #       - name: "pub_host_E"
-  #         type: host
-  #         ipv4: "7.7.7.3"
-  #       - name: "pub_host_F"
-  #         type: host
-  #         ipv4: "7.7.7.4"
-  #   services:
-  #     - http
-  #     - https
-  #   rule:
-  #     action: "Accept"
+  
