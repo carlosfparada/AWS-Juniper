@@ -65,9 +65,10 @@ security_policies:
                 - 7.7.7.1
                 - 7.7.7.2
             application:
-              # any: true
               names:
                 - junos-finger
+                - junos-http
+                - junos-https
           then:
             deny: true
             # permit: 
