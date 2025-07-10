@@ -65,9 +65,10 @@ security_policies:
                 - 7.7.7.1
                 - 7.7.7.2
             application:
-              names:
-                - http
-                - https
+              any: true
+              # names:
+              #   - http
+              #   - https
           then:
             deny: true
             # permit: 
@@ -84,9 +85,9 @@ security_policies:
                 - 10.10.2.3
             application:
               any: true
-              names:
-                - http
-                - https
+              # names:
+              #   - http
+              #   - https
           then:
             deny: true
             # permit: 
