@@ -37,6 +37,7 @@ l3_interfaces_juniper:
     ipv4:
       - address: 10.0.2.225/24
 
+# UI (Firefox)
 security_zones:
   - name: public
     interfaces:
@@ -45,6 +46,7 @@ security_zones:
     interfaces:
       - ge-0/0/1
 
+# UI (Firefox)
 security_policy_rules:
     name: Security_Policy_1
     from_zones:
