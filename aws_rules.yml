@@ -31,10 +31,9 @@
           zones: "{{ security_zones }}"
         state: merged
 
-    - name: Create security zones
+    - name: Create security policies
       junipernetworks.junos.junos_security_policies:
-        config:
-          zones: "{{ security_zones }}"
+        config: "{{ security_policies }}"
         state: merged
 
     - name: Check Juniper OS correctness of commit configuration
