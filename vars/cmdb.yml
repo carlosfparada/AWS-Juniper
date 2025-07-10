@@ -68,24 +68,24 @@ security_policies:
           permit:
             tcp_options:
               window_scale: true
-      # - name: rule_B
-      #   description: "Allow rule_B traffic from public to private"
-      #   match:
-      #     source_address:
-      #       addresses:
-      #         - 7.7.7.1
-      #         - 7.7.7.2
-      #     destination_address:
-      #       addresses:
-      #         - 10.10.2.3
-      #     application:
-      #       names:
-      #         - junos-http
-      #         - junos-https
-      #   then:
-      #     permit:
-      #       tcp_options:
-      #         window_scale: true
+      - name: rule_B
+        description: "Allow rule_B traffic from public to private"
+        match:
+          source_address:
+            addresses:
+              - 7.7.7.1
+              - 7.7.7.2
+          destination_address:
+            addresses:
+              - 10.10.2.3
+          application:
+            names:
+              - junos-http
+              - junos-https
+        then:
+          permit:
+            tcp_options:
+              window_scale: true
   from_zones:
     - name: public
       to_zones:
@@ -109,21 +109,21 @@ security_policies:
                 permit:
                   tcp_options:
                     window_scale: true              
-            # - name: rule_D
-            #   description: "Allow rule_D traffic from public to private"
-            #   match:
-            #     source_address:
-            #       addresses:
-            #         - 10.10.2.4
-            #     destination_address:
-            #       addresses:
-            #         - 7.7.7.3
-            #         - 7.7.7.4
-            #     application:
-            #       names:
-            #         - junos-http
-            #         - junos-https
-            #   then:
-            #     permit:
-            #       tcp_options:
-            #         window_scale: true
+            - name: rule_D
+              description: "Allow rule_D traffic from public to private"
+              match:
+                source_address:
+                  addresses:
+                    - 10.10.2.4
+                destination_address:
+                  addresses:
+                    - 7.7.7.3
+                    - 7.7.7.4
+                application:
+                  names:
+                    - junos-http
+                    - junos-https
+              then:
+                permit:
+                  tcp_options:
+                    window_scale: true
