@@ -48,7 +48,7 @@
                 name: test_glob_3
                 then:
                   deny: true
-            state: merged
+          state: merged
 
     - name: Check Juniper OS correctness of commit configuration
       junipernetworks.junos.junos_config:
