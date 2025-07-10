@@ -18,25 +18,19 @@
     ansible_network_os: junos
     ansible_command_timeout: 300
   tasks:
-    # sh ip address
-    - name: Juniper OS Sets IP addresses
-      junipernetworks.junos.junos_l3_interfaces:
-        config: "{{ l3_interfaces_juniper }}"
+    - name: Create security zone "public"
+      junipernetworks.junos.junos_security_zone:
+        name: public
+        interfaces:
+          - name: ge-0/0/0
         state: merged
-      register: _l3_interface_juniper
-      become: true
 
-    - name: Juniper OS Debug IPs before
-      debug:
-        var: _l3_interface_juniper.before
-
-    - name: Juniper OS Debug IPs command
-      debug:
-        var: _l3_interface_juniper.commands
-
-    - name: Juniper OS Debug IPs after
-      debug:
-        var: _l3_interface_juniper.after
+    - name: Create security zone "private"
+      junipernetworks.junos.junos_security_zone:
+        name: private
+        interfaces:
+          - name: ge-0/0/1
+        state: merged
 
     - name: Juniper enable inncoming traffic
       junipernetworks.junos.junos_config:
