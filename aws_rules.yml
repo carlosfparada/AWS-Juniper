@@ -27,9 +27,14 @@
 
     - name: Create security zone "private"
       junipernetworks.junos.junos_security_zones:
-        name: private
-        interfaces:
-          - name: ge-0/0/1
+        config:
+          zones:
+            - name: public
+              interfaces:
+                - ge-0/0/0
+            - name: private
+              interfaces:
+                - ge-0/0/1
         state: merged
 
     - name: Juniper enable inncoming traffic
