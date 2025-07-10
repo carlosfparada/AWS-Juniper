@@ -67,8 +67,7 @@ security_policies:
             application:
               # any: true
               names:
-                - http
-                - https
+                - junos-finger
           then:
             deny: true
             # permit: 
