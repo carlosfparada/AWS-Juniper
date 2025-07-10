@@ -23,6 +23,7 @@
         config:
           zones:
             - name: zone
+            - juniper-host
         state: deleted
 
     - name: Create security zones
