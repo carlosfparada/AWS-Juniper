@@ -33,8 +33,22 @@
 
     - name: Create security policies
       junipernetworks.junos.junos_security_policies:
-        config: "{{ security_policies }}"
-        state: merged
+        config:
+          # "{{ security_policies }}"
+          global:
+            policies:
+              - description: test update
+                match:
+                  application:
+                    any: true
+                  destination_address:
+                    any_ipv6: true
+                  source_address:
+                    any: true
+                name: test_glob_3
+                then:
+                  deny: true
+            state: merged
 
     - name: Check Juniper OS correctness of commit configuration
       junipernetworks.junos.junos_config:
