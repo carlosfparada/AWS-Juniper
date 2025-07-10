@@ -73,8 +73,6 @@ security_policies:
             permit:
               application_services:
                 reverse_redirect_wx: 'True'
-                uac_policy:
-                  enable: true
               tcp_options:
                 initial_tcp_mss: 64
                 window_scale: true              
@@ -97,8 +95,6 @@ security_policies:
             permit:
               application_services:
                 reverse_redirect_wx: 'True'
-                uac_policy:
-                  enable: true
               tcp_options:
                 initial_tcp_mss: 64
                 window_scale: true
