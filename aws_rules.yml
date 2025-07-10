@@ -31,7 +31,7 @@
           zones:
             - name: zone
             - name: junos-host
-        state: merged
+        state: deleted
 
     - name: Create security zones
       junipernetworks.junos.junos_security_zones:
