@@ -72,7 +72,6 @@ security_policies:
             # deny: true
             permit:
               tcp_options:
-                initial_tcp_mss: 64
                 window_scale: true              
         - name: rule_B
           description: "Allow rule_B traffic from public to private"
@@ -92,7 +91,6 @@ security_policies:
             # deny: true
             permit:
               tcp_options:
-                initial_tcp_mss: 64
                 window_scale: true
 
   # - name: rule_C
