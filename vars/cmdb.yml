@@ -52,19 +52,6 @@ security_policies:
     #   - name: public
     #     to_zones:
     #       - name: private
-          global:
-            policies:
-              - description: test update
-                match:
-                  application:
-                    any: true
-                  destination_address:
-                    any_ipv6: true
-                  source_address:
-                    any: true
-                name: test_glob_3
-                then:
-                  deny: true
     global:
       policies:
         - name: rule_A
