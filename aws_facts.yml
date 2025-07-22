@@ -23,6 +23,7 @@
           - "all"
           # - "!config"
         gather_network_resources:
+          - "all"
       register: _junos_facts
 
     - debug: 
