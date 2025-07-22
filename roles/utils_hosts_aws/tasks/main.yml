@@ -14,3 +14,4 @@
     name: "{{ node_name }}"
     groups: "juniper"
   when: node_name is defined
+
