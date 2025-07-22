@@ -46,7 +46,8 @@ security_zones:
     interfaces:
       - ge-0/0/1
 
-# UI (Firefox)
+# UI (Firefox, Chrome does not work)
+# To see the update of policies select another menu (left) and come back
 security_policies:
   global:
     policies:
