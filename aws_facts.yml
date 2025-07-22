@@ -20,7 +20,7 @@
     - name: JunOS Facts
       junipernetworks.junos.junos_facts:
         gather_subset:
-          - "!config"
+          # - "!config"
         gather_network_resources:
       register: _junos_facts
 
