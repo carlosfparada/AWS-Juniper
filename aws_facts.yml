@@ -19,7 +19,8 @@
   tasks:
     - name: JunOS Facts
       junipernetworks.junos.junos_facts:
-        gather_subset:
+        gather_subset: 
+          - "all"
           # - "!config"
         gather_network_resources:
       register: _junos_facts
