@@ -7,7 +7,8 @@
   set_fact:
     node_name: "{{ item }}"
   loop: "{{ groups['all'] }}"
-  when: hostvars[item].tags is defined and hostvars[item].tags.Name | regex_search("^juniper-3$")
+  #when: hostvars[item].tags is defined and hostvars[item].tags.Name | regex_search("^juniper-3$")
+  when: hostvars[item].tags is defined and hostvars[item].tags.Name is match("^juniper-3$")
 
 - name: Add Juniper node to the juniper group
   add_host:
